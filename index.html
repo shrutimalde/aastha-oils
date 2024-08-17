@@ -38,7 +38,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container" id="orderFormContainer">
         <h1 class="text-primary title">AASTHA OILS ORDER FORM</h1>
         <form id="orderForm">
             <div class="row mt-4">
@@ -220,29 +220,29 @@
                         <tbody>
                             <tr>
                                 <th scope="row" class="align-middle">900</th>
-                                <td><input type="number" class="form-control w-100 pushpadipOilBox" id="pushpadipOil900Box"
-                                        oninput="updateTotals('pushpadipOil')">
+                                <td><input type="number" class="form-control w-100 pushpadipOilBox"
+                                        id="pushpadipOil900Box" oninput="updateTotals('pushpadipOil')">
                                 </td>
-                                <td><input type="number" class="form-control w-100 pushpadipOilFree" id="pushpadipOil900Free"
-                                        oninput="updateTotals('pushpadipOil')">
+                                <td><input type="number" class="form-control w-100 pushpadipOilFree"
+                                        id="pushpadipOil900Free" oninput="updateTotals('pushpadipOil')">
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row" class="align-middle">800</th>
-                                <td><input type="number" class="form-control w-100 pushpadipOilBox" id="pushpadipOil800Box"
-                                        oninput="updateTotals('pushpadipOil')">
+                                <td><input type="number" class="form-control w-100 pushpadipOilBox"
+                                        id="pushpadipOil800Box" oninput="updateTotals('pushpadipOil')">
                                 </td>
-                                <td><input type="number" class="form-control w-100 pushpadipOilFree" id="pushpadipOil800Free"
-                                        oninput="updateTotals('pushpadipOil')">
+                                <td><input type="number" class="form-control w-100 pushpadipOilFree"
+                                        id="pushpadipOil800Free" oninput="updateTotals('pushpadipOil')">
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row" class="align-middle">450</th>
-                                <td><input type="number" class="form-control w-100 pushpadipOilBox" id="pushpadipOil450Box"
-                                        oninput="updateTotals('pushpadipOil')">
+                                <td><input type="number" class="form-control w-100 pushpadipOilBox"
+                                        id="pushpadipOil450Box" oninput="updateTotals('pushpadipOil')">
                                 </td>
-                                <td><input type="number" class="form-control w-100 pushpadipOilFree" id="pushpadipOil450Free"
-                                        oninput="updateTotals('pushpadipOil')">
+                                <td><input type="number" class="form-control w-100 pushpadipOilFree"
+                                        id="pushpadipOil450Free" oninput="updateTotals('pushpadipOil')">
                                 </td>
                             </tr>
                         </tbody>
@@ -265,6 +265,8 @@
             </div>
 
             <button type="submit" class="btn btn-primary mt-3">Download PDF</button>
+            <button type="submit" class="btn btn-success mt-3 pl-2" onclick="shareOnWhatsApp()">Share on
+                WhatsApp </button>
         </form>
     </div>
     <script>
@@ -288,6 +290,65 @@
 
             document.getElementById(`${product}TotalBoxes`).textContent = totalBoxes;
             document.getElementById(`${product}TotalFree`).textContent = totalFree;
+        }
+
+        function shareOnWhatsApp() {
+            // Get the values from the form inputs
+            const partyName = document.getElementById('partyName').value;
+            const orderDate = document.getElementById('orderDate').value;
+            const note = document.getElementById('note').value;
+
+            const gagandipOilData = [
+                { ml: 900, boxes: document.getElementById('gagandipOil900Box').value, free: document.getElementById('gagandipOil900Free').value },
+                { ml: 800, boxes: document.getElementById('gagandipOil800Box').value, free: document.getElementById('gagandipOil800Free').value },
+                { ml: 450, boxes: document.getElementById('gagandipOil450Box').value, free: document.getElementById('gagandipOil450Free').value },
+                { ml: 200, boxes: document.getElementById('gagandipOil200Box').value, free: document.getElementById('gagandipOil200Free').value },
+                { ml: 150, boxes: document.getElementById('gagandipOil150Box').value, free: document.getElementById('gagandipOil150Free').value },
+                { ml: 100, boxes: document.getElementById('gagandipOil100Box').value, free: document.getElementById('gagandipOil100Free').value }
+            ];
+            const gagandipGheeData = [
+                { ml: 1000, boxes: document.getElementById('gagandipGhee1000Box').value, free: document.getElementById('gagandipGhee1000Free').value },
+                { ml: 500, boxes: document.getElementById('gagandipGhee500Box').value, free: document.getElementById('gagandipGhee500Free').value },
+                { ml: 200, boxes: document.getElementById('gagandipGhee200Box').value, free: document.getElementById('gagandipGhee200Free').value },
+                { ml: 100, boxes: document.getElementById('gagandipGhee100Box').value, free: document.getElementById('gagandipGhee100Free').value }
+            ];
+
+            const gagandipSoap = document.getElementById('gagandipSoap').value;
+
+            const pushpadipOilData = [
+                { ml: 900, boxes: document.getElementById('pushpadipOil900Box').value, free: document.getElementById('pushpadipOil900Free').value },
+                { ml: 800, boxes: document.getElementById('pushpadipOil800Box').value, free: document.getElementById('pushpadipOil800Free').value },
+                { ml: 450, boxes: document.getElementById('pushpadipOil450Box').value, free: document.getElementById('pushpadipOil450Free').value },
+            ];
+
+            // Format the message string
+            let message = `AASTHA OILS ORDER FORM\n\n` +
+                `Party Name: ${partyName}\n` +
+                `Order Date: ${orderDate}\n\n` +
+                `Gagandip Oil:\n` +
+                gagandipOilData.map(row => `- ${row.ml} ML: ${row.boxes} Boxes, ${row.free} Free`).join('\n') + `\n` +
+                `Total Boxes: ${document.getElementById('gagandipOilTotalBoxes').textContent}, ` +
+                `Total Free: ${document.getElementById('gagandipOilTotalFree').textContent}\n\n` +
+                `Gagandip Ghee:\n` +
+                gagandipGheeData.map(row => `- ${row.ml} ML: ${row.boxes} Boxes, ${row.free} Free`).join('\n') + `\n` +
+                `Total Boxes: ${document.getElementById('gagandipGheeTotalBoxes').textContent}, ` +
+                `Total Free: ${document.getElementById('gagandipGheeTotalFree').textContent}\n\n` +
+                `Gagandip Soap:\n` +
+                `- ${gagandipSoap} PCS\n\n` +
+                `Pushpadip Oil:\n` +
+                pushpadipOilData.map(row => `- ${row.ml} ML: ${row.boxes} Boxes, ${row.free} Free`).join('\n') + `\n` +
+                `Total Boxes: ${document.getElementById('pushpadipOilTotalBoxes').textContent}, ` +
+                `Total Free: ${document.getElementById('pushpadipOilTotalFree').textContent}\n\n` +
+                `Note/ Special Instructions: ${note}`;
+
+            // Encode the message for use in a URL
+            const encodedMessage = encodeURIComponent(message);
+
+            // Create the WhatsApp share link
+            const whatsappLink = `https://api.whatsapp.com/send?text=${encodedMessage}`;
+
+            // Redirect to the WhatsApp link (this will open WhatsApp with the pre-filled message)
+            window.location.href = whatsappLink;
         }
 
         document.getElementById('orderForm').addEventListener('submit', function (e) {
@@ -422,7 +483,7 @@
             const lines = doc.splitTextToSize(note, 180);
             doc.setTextColor(41, 128, 185);
             doc.text(lines, 14, noteY + 1);
-            
+
 
             doc.save(`${partyName} - ${orderDate}.pdf`);
         });
