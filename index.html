@@ -39,7 +39,7 @@
 
 <body>
     <div class="container" id="orderFormContainer">
-        <h1 class="text-primary title">AASTHA OILS ORDER FORM</h1>
+        <h1 class="text-primary title">ORDER FORM</h1>
         <form id="orderForm">
             <div class="row mt-4">
                 <div class="col-md-6 col-sm-12 mt-3">
@@ -259,7 +259,7 @@
                 <div class="col-md-12 col-sm-12 mt-3">
                     <div class="form-floating mb-3">
                         <textarea class="form-control" id="note" rows="3"></textarea>
-                        <label for="note"> Note/ Special Instructions</label>
+                        <label for="note"> Note</label>
                     </div>
                 </div>
             </div>
@@ -292,11 +292,21 @@
             document.getElementById(`${product}TotalFree`).textContent = totalFree;
         }
 
+        function formatDate(dateString) {
+            const [year, month, day] = dateString.split('-');
+            return `${day}-${month}-${year}`;
+        }
+
         function shareOnWhatsApp() {
-            // Get the values from the form inputs
-            const partyName = document.getElementById('partyName').value;
-            const orderDate = document.getElementById('orderDate').value;
-            const note = document.getElementById('note').value;
+            function formatDate(dateString) {
+                const [year, month, day] = dateString.split('-');
+                return `${day}-${month}-${year}`;
+            }
+
+            let partyName = document.getElementById('partyName').value;
+            let orderDate = document.getElementById('orderDate').value;
+            orderDate = formatDate(orderDate);
+            let note = document.getElementById('note').value;
 
             const gagandipOilData = [
                 { ml: 900, boxes: document.getElementById('gagandipOil900Box').value, free: document.getElementById('gagandipOil900Free').value },
@@ -306,6 +316,7 @@
                 { ml: 150, boxes: document.getElementById('gagandipOil150Box').value, free: document.getElementById('gagandipOil150Free').value },
                 { ml: 100, boxes: document.getElementById('gagandipOil100Box').value, free: document.getElementById('gagandipOil100Free').value }
             ];
+
             const gagandipGheeData = [
                 { ml: 1000, boxes: document.getElementById('gagandipGhee1000Box').value, free: document.getElementById('gagandipGhee1000Free').value },
                 { ml: 500, boxes: document.getElementById('gagandipGhee500Box').value, free: document.getElementById('gagandipGhee500Free').value },
@@ -321,40 +332,80 @@
                 { ml: 450, boxes: document.getElementById('pushpadipOil450Box').value, free: document.getElementById('pushpadipOil450Free').value },
             ];
 
-            // Format the message string
-            let message = `AASTHA OILS ORDER FORM\n\n` +
-                `Party Name: ${partyName}\n` +
-                `Order Date: ${orderDate}\n\n` +
-                `Gagandip Oil:\n` +
-                gagandipOilData.map(row => `- ${row.ml} ML: ${row.boxes} Boxes, ${row.free} Free`).join('\n') + `\n` +
-                `Total Boxes: ${document.getElementById('gagandipOilTotalBoxes').textContent}, ` +
-                `Total Free: ${document.getElementById('gagandipOilTotalFree').textContent}\n\n` +
-                `Gagandip Ghee:\n` +
-                gagandipGheeData.map(row => `- ${row.ml} ML: ${row.boxes} Boxes, ${row.free} Free`).join('\n') + `\n` +
-                `Total Boxes: ${document.getElementById('gagandipGheeTotalBoxes').textContent}, ` +
-                `Total Free: ${document.getElementById('gagandipGheeTotalFree').textContent}\n\n` +
-                `Gagandip Soap:\n` +
-                `- ${gagandipSoap} PCS\n\n` +
-                `Pushpadip Oil:\n` +
-                pushpadipOilData.map(row => `- ${row.ml} ML: ${row.boxes} Boxes, ${row.free} Free`).join('\n') + `\n` +
-                `Total Boxes: ${document.getElementById('pushpadipOilTotalBoxes').textContent}, ` +
-                `Total Free: ${document.getElementById('pushpadipOilTotalFree').textContent}\n\n` +
-                `Note/ Special Instructions: ${note}`;
+            // Calculate total boxes
+            const gagandipOilTotalBoxes = parseInt(document.getElementById('gagandipOilTotalBoxes').textContent, 10);
+            const gagandipGheeTotalBoxes = parseInt(document.getElementById('gagandipGheeTotalBoxes').textContent, 10);
+            const pushpadipOilTotalBoxes = parseInt(document.getElementById('pushpadipOilTotalBoxes').textContent, 10);
 
-            // Encode the message for use in a URL
+            // Initialize the free items note with headings
+            let freeItemsNote = '';
+
+            function appendFreeItems(items, heading) {
+                const freeItems = items.filter(row => row.free)
+                    .map(row => `- ${row.ml} ML: ${row.free} Free`).join('\n');
+                if (freeItems) {
+                    freeItemsNote += `\n_*${heading}*_\n${freeItems}\n`;
+                }
+            }
+
+            // Append free items for each category
+            appendFreeItems(gagandipOilData, 'Gagandip Oil');
+            appendFreeItems(gagandipGheeData, 'Gagandip Ghee');
+            appendFreeItems(pushpadipOilData, 'Pushpadip Oil');
+
+            // Format the message string with bold and italic
+            let message = `_*ORDER DETAILS*_ \n\n` +
+                `*Party Name:* _*${partyName}*_\n` +
+                `*Order Date:* _${orderDate}_\n\n`;
+
+            if (gagandipOilTotalBoxes > 0) {
+                message += `_*Gagandip Oil:*_ \n` +
+                    gagandipOilData.filter(row => row.boxes)
+                        .map(row => `- ${row.ml} ML: ${row.boxes} Boxes`).join('\n') + `\n` +
+                    `*Total Boxes:* ${gagandipOilTotalBoxes}\n\n`;
+            }
+
+            // Conditionally add Gagandip Ghee section
+            if (gagandipGheeTotalBoxes > 0) {
+                message += `_*Gagandip Ghee:*_ \n` +
+                    gagandipGheeData.filter(row => row.boxes)
+                        .map(row => `- ${row.ml} ML: ${row.boxes} Boxes`).join('\n') + `\n` +
+                    `*Total Boxes:* ${gagandipGheeTotalBoxes}\n\n`;
+            }
+
+            // Always add Gagandip Soap section
+            message += `_*Gagandip Soap:*_ \n` +
+                `- ${gagandipSoap} DZN\n\n`;
+
+            // Conditionally add Pushpadip Oil section
+            if (pushpadipOilTotalBoxes > 0) {
+                message += `_*Pushpadip Oil:*_ \n` +
+                    pushpadipOilData.filter(row => row.boxes)
+                        .map(row => `- ${row.ml} ML: ${row.boxes} Boxes`).join('\n') + `\n` +
+                    `*Total Boxes:* ${pushpadipOilTotalBoxes}\n\n`;
+            }
+
+            if (freeItemsNote.trim().length > 0) {
+                message += `_*Free Items:*_${freeItemsNote}`;
+            }
+
+            if (note.trim()) {
+                message += `\n*Note:* \n${note}`;
+            }
+
             const encodedMessage = encodeURIComponent(message);
 
-            // Create the WhatsApp share link
             const whatsappLink = `https://api.whatsapp.com/send?text=${encodedMessage}`;
 
-            // Redirect to the WhatsApp link (this will open WhatsApp with the pre-filled message)
             window.location.href = whatsappLink;
         }
 
-        function downloadPDF(){
-            const partyName = document.getElementById('partyName').value;
-            const orderDate = document.getElementById('orderDate').value;
-            const note = document.getElementById('note').value;
+
+        function downloadPDF() {
+            let partyName = document.getElementById('partyName').value;
+            let orderDate = document.getElementById('orderDate').value;
+            orderDate = formatDate(orderDate);
+            let note = document.getElementById('note').value;
 
             const gagandipOilData = [
                 { ml: 900, boxes: document.getElementById('gagandipOil900Box').value, free: document.getElementById('gagandipOil900Free').value },
@@ -384,24 +435,23 @@
 
             // Add title
             doc.setFontSize(18);
-            doc.text('Aastha Oils Order Form', 14, 15);
+            doc.text('ORDER DETAILS', 14, 15);
             // Add party name and order date
             doc.setTextColor(0, 0, 0);
-            doc.setFontSize(12);
+            doc.setFontSize(14);
             doc.text(`Party Name:`, 14, 25);
 
             doc.setTextColor(41, 128, 185);
             doc.setFont("helvetica", "bold");
-            doc.text(partyName, 40, 25);
+            doc.text(partyName, 50, 25);
 
             doc.setTextColor(0, 0, 0);
-            doc.setFontSize(12);
             doc.setFont("helvetica", "normal");
             doc.text(`Order Date:`, 14, 32);
 
             doc.setTextColor(41, 128, 185);
             doc.setFont("helvetica", "bold");
-            doc.text(orderDate, 40, 32);
+            doc.text(orderDate, 50, 32);
 
             // Add Gagandip Oil table
             doc.setTextColor(0, 0, 0);
@@ -447,7 +497,7 @@
             doc.setFontSize(14);
             doc.text('Gagandip Soap', 14, soapY - 5);
             doc.autoTable({
-                head: [['Gagandip Soap (DZN - PCS)']],
+                head: [['Gagandip Soap (DZN)']],
                 body: [[gagandipSoap]],
                 startY: soapY,
                 headStyles: { fillColor: [41, 128, 185], textColor: 255 },
@@ -476,9 +526,9 @@
                 footStyles: { fillColor: [220, 220, 220], textColor: 0, fontStyle: 'bold' }
             });
 
-            doc.setFontSize(12);
+            doc.setFontSize(14);
             const noteY = doc.lastAutoTable.finalY + 15;
-            doc.text(`Note/ Special Instructions: `, 14, noteY - 5);
+            doc.text(`Note: `, 14, noteY - 5);
             const lines = doc.splitTextToSize(note, 180);
             doc.setTextColor(41, 128, 185);
             doc.text(lines, 14, noteY + 1);
