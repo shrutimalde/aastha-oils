@@ -263,10 +263,11 @@
                     </div>
                 </div>
             </div>
-
-            <button type="button" class="btn btn-primary mt-3" onclick="downloadPDF()">Download PDF</button>
-            <button type="button" class="btn btn-success mt-3 pl-2" onclick="shareOnWhatsApp()">Share on
+            <div class="d-flex mt-3 mb-3">
+            <button type="button" class="btn btn-primary" onclick="downloadPDF()">Download PDF</button>
+            <button type="button" class="btn btn-success ms-1" onclick="shareOnWhatsApp()">Share on
                 WhatsApp </button>
+            </div>
         </form>
     </div>
     <script>
@@ -298,12 +299,12 @@
         }
 
         function shareOnWhatsApp() {
-            function formatDate(dateString) {
-                const [year, month, day] = dateString.split('-');
-                return `${day}-${month}-${year}`;
-            }
-
             let partyName = document.getElementById('partyName').value;
+
+            if (!partyName) {
+                alert('Please enter party name');
+                return;
+            }
             let orderDate = document.getElementById('orderDate').value;
             orderDate = formatDate(orderDate);
             let note = document.getElementById('note').value;
@@ -348,15 +349,13 @@
                 }
             }
 
-            // Append free items for each category
             appendFreeItems(gagandipOilData, 'Gagandip Oil');
             appendFreeItems(gagandipGheeData, 'Gagandip Ghee');
             appendFreeItems(pushpadipOilData, 'Pushpadip Oil');
 
-            // Format the message string with bold and italic
             let message = `_*ORDER DETAILS*_ \n\n` +
                 `*Party Name:* _*${partyName}*_\n` +
-                `*Order Date:* _${orderDate}_\n\n`;
+                `*Order Date:* ${orderDate}\n\n`;
 
             if (gagandipOilTotalBoxes > 0) {
                 message += `_*Gagandip Oil:*_ \n` +
@@ -365,7 +364,6 @@
                     `*Total Boxes:* ${gagandipOilTotalBoxes}\n\n`;
             }
 
-            // Conditionally add Gagandip Ghee section
             if (gagandipGheeTotalBoxes > 0) {
                 message += `_*Gagandip Ghee:*_ \n` +
                     gagandipGheeData.filter(row => row.boxes)
@@ -373,11 +371,11 @@
                     `*Total Boxes:* ${gagandipGheeTotalBoxes}\n\n`;
             }
 
-            // Always add Gagandip Soap section
-            message += `_*Gagandip Soap:*_ \n` +
+            if(gagandipSoap) {
+                message += `_*Gagandip Soap:*_ \n` +
                 `- ${gagandipSoap} DZN\n\n`;
-
-            // Conditionally add Pushpadip Oil section
+            }
+            
             if (pushpadipOilTotalBoxes > 0) {
                 message += `_*Pushpadip Oil:*_ \n` +
                     pushpadipOilData.filter(row => row.boxes)
@@ -403,6 +401,10 @@
 
         function downloadPDF() {
             let partyName = document.getElementById('partyName').value;
+            if (!partyName) {
+                alert('Please enter party name');
+                return;
+            }
             let orderDate = document.getElementById('orderDate').value;
             orderDate = formatDate(orderDate);
             let note = document.getElementById('note').value;
@@ -443,7 +445,7 @@
 
             doc.setTextColor(41, 128, 185);
             doc.setFont("helvetica", "bold");
-            doc.text(partyName, 50, 25);
+            doc.text(partyName, 48, 25);
 
             doc.setTextColor(0, 0, 0);
             doc.setFont("helvetica", "normal");
@@ -451,7 +453,7 @@
 
             doc.setTextColor(41, 128, 185);
             doc.setFont("helvetica", "bold");
-            doc.text(orderDate, 50, 32);
+            doc.text(orderDate, 48, 32);
 
             // Add Gagandip Oil table
             doc.setTextColor(0, 0, 0);
