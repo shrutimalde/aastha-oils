@@ -264,7 +264,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary mt-3">Download PDF</button>
+            <button type="button" class="btn btn-primary mt-3" onclick="downloadPDF()">Download PDF</button>
             <button type="button" class="btn btn-success mt-3 pl-2" onclick="shareOnWhatsApp()">Share on
                 WhatsApp </button>
         </form>
@@ -293,8 +293,6 @@
         }
 
         function shareOnWhatsApp() {
-            e.preventDefault();
-            
             // Get the values from the form inputs
             const partyName = document.getElementById('partyName').value;
             const orderDate = document.getElementById('orderDate').value;
@@ -353,8 +351,7 @@
             window.location.href = whatsappLink;
         }
 
-        document.getElementById('orderForm').addEventListener('submit', function (e) {
-            e.preventDefault();
+        function downloadPDF(){
             const partyName = document.getElementById('partyName').value;
             const orderDate = document.getElementById('orderDate').value;
             const note = document.getElementById('note').value;
@@ -488,7 +485,7 @@
 
 
             doc.save(`${partyName} - ${orderDate}.pdf`);
-        });
+        };
     </script>
 </body>
 
