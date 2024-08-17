@@ -293,6 +293,8 @@
         }
 
         function shareOnWhatsApp() {
+            e.preventDefault();
+            
             // Get the values from the form inputs
             const partyName = document.getElementById('partyName').value;
             const orderDate = document.getElementById('orderDate').value;
